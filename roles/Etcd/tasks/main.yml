@@ -1,0 +1,80 @@
+---
+
+  - name: install etcd
+    tags: etcd, ubuntu
+    apt:
+      name: etcd
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: replace needed files for configuration
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_NAME="default"'
+      line: 'ETCD_NAME= "controller"'
+      state: present
+
+  - name: replace needed files for configuration(1)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_DATA_DIR="/var/lib/etcd/default"'
+      line: 'ETCD_DATA_DIR="/var/lib/etcd"'
+      state: present
+
+  - name: replace needed files for configuration(2)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"'
+      line: 'ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster-01"'
+      state: present
+
+  - name: replace needed files for configuration(3)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_INITIAL_CLUSTER="default=localhost:2380"'
+      line: 'ETCD_INITIAL_CLUSTER="controller=http://10.0.0.11:2380"'
+      state: present
+
+  - name: replace needed files for configuration(4)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_INITIAL_ADVERTISE_PEER_URLS="http://localhost:2380"'
+      line: 'ETCD_INITIAL_ADVERTISE_PEER_URLS=http://10.0.0.11:2380"'
+      state: present
+
+  - name: replace needed files for configuration(5)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_ADVERTISE_CLIENT_URLS="localhost:2379"'
+      line: 'ETCD_ADVERTISE_CLIENT_URLS="http://10.0.0.11:2379"'
+      state: present
+
+  - name: replace needed files for configuration(6)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_LISTEN_PEER_URLs="http://localhost:2380"'
+      line: 'ETCD_LISTEN_PEER_URLs="http://0.0.0.0:2380"'
+      state: present
+
+  - name: replace needed files for configuration(2)
+    tags: etcd, ubuntu, replace, add
+    lineinfile:
+      path: /etc/default/etcd
+      regexp: 'ETCD_LISTEN_CLIENT_URLS="http://localhost:2379"'
+      line: 'ETCD_LISTEN_CLIENT_URLs="http://10.0.0.11:2379"'
+      state: present
+
+  - name: service restart for etcd
+    tags: etcd, ubuntu , restart
+    service:
+      name: etcd
+      state: restarted
+      enabled: true
+    when: ansible_distribution == "Ubuntu"
