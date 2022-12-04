@@ -1,0 +1,27 @@
+---
+
+  - name: install SQL Database
+    tags: SQL, ubuntu
+    apt:
+      name: 
+        - mariadb-server 
+        - python3-pymysql
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: SQL configuration
+    tags: SQL, ubuntu, configuration
+    copy:
+      src: 99-openstack.cnf
+      dest: /etc/mysql/maradb.conf.d
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: restart MYSQL service
+    tags: SQL, ubuntu
+    service:
+      name: mysql
+      state: restarted
+      enabled: true
+
